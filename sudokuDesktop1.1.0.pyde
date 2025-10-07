@@ -5,6 +5,7 @@ selectCol = -1
 selectNum = 0
 grid = [[0 for _ in range(9)] for _ in range(9)]
 locked = [[False for _ in range(9)] for _ in range(9)]
+answer = True
 
 
 def setup():
@@ -100,16 +101,17 @@ def checkValid(arr, num, row, col):
 
 
 def mousePressed():
-    global selectRow, selectCol, selectNum
+    global selectRow, selectCol, selectNum, answer
     if mouseY < 9*gridSize and mouseX < 9*gridSize:
         if not locked[floor(mouseY/gridSize)][floor(mouseX/gridSize)]:
             selectCol = floor(mouseX/gridSize)
             selectRow = floor(mouseY/gridSize)
+            answer = True
         else:
             print("Can't change this number")
             
     if mouseY < 400 and mouseX > 600 and mouseX < 900:
-        if mouseY < 100:
+        if mouseY < 100 and mouseY > 0:
             if mouseX < 700:
                 selectNum = 1
             elif mouseX < 800:
@@ -138,16 +140,15 @@ def mousePressed():
         if selectNum == 0 or checkValid(grid, selectNum, selectRow, selectCol):
             grid[selectRow][selectCol] = selectNum
             selectNum = 0
+            answer =True
         else:
             if selectRow != -1 and selectCol != -1:
+                selectNum = 0
                 print("Invalid number")
+                answer =False
                 
                 
 def drawGameUI():
-    if selectRow != -1 and selectCol != -1:
-        fill(200, 200, 255, 100)
-        noStroke()
-        rect(selectCol*gridSize, selectRow*gridSize, gridSize, gridSize)
     row=0
     while row<9:
         col=0
@@ -158,7 +159,27 @@ def drawGameUI():
                 rect(col*gridSize, row*gridSize, gridSize, gridSize)
             col+=1
         row+=1
-        
+    if selectRow != -1 and selectCol != -1:
+        if answer:
+            fill(200,200,255,100)
+        else:
+            fill(255,0,0,100)
+        noStroke()
+        rect(selectCol*gridSize, selectRow*gridSize, gridSize, gridSize)
+    selectNum = grid[selectRow][selectCol]
+    if selectNum !=0 :
+        row=0
+        while row<9:
+            col=0
+            while col<9:
+                if grid[row][col]==selectNum:
+                    fill(255,200,20,100)
+                    noStroke()
+                    rect(col*gridSize, row*gridSize, gridSize, gridSize)
+                col+=1
+            row+=1
+    
+    
                 
 def shuffleArray(arr):
     i=1
